@@ -1,13 +1,12 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 
+// 3 Generate JWT tokens
 const generateToken = (id) => {
-    if (!process.env.JWT_SECRET) {
-        throw new Error('JWT_SECRET not set');
-    }
     return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 };
 
+// 4 Register User
 exports.registerUser = async (req, res) => {
     const { fullName, email, password, profilePic } = req.body;
     if (!fullName || !email || !password) {
@@ -31,6 +30,7 @@ exports.registerUser = async (req, res) => {
     }
 };
 
+// 4 Login User
 exports.loginUser = async (req, res) => {
     const { email, password } = req.body;
     if (!email || !password) {
@@ -53,6 +53,7 @@ exports.loginUser = async (req, res) => {
     }
 };
 
+// 4 getUserInfo
 exports.getUserInfo = async (req, res) => {
     try {
         const user = await User.findById(req.user.id).select('-password');
