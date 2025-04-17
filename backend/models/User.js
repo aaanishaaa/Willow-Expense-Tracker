@@ -6,36 +6,32 @@ const UserSchema = new mongoose.Schema(
     {
     fullName: {
         type: String,
-        required: true,
+        required: true
     },
     email:{
         type: String,
         required: true,
-        unique: true,
+        unique: true
     },
     password:{
         type: String,
         required: true,
     },
-    profilePic:{
+    profileImageUrl:{
         type: String,
-        default:null,
+        default:null
     }},
     { timestamps: true}
 );
 
 //Hash the password before saving the user
 UserSchema.pre('save', async function(next){
-    const user = this;
-    if(user.isModified('password')){
-        user.password = await bcrypt.hash(user.password,8);
-    }
-    next();
+    if(!this.isModified('password')) return next();
+    this.password = await bcrypt.hash(this.password,10)
 });
 
 //compare 
-UserSchema.methods.comparePassword = async function(Candidatepassword){
-    const user = this;
-    return await bcrypt.compare(Candidatepassword,user.password);
+UserSchema.methods.comparePassword = async function(candidatePassword){
+    return await bcrypt.compare(candidatePassword,this.password);
 };
 module.exports=mongoose.model('User',UserSchema);

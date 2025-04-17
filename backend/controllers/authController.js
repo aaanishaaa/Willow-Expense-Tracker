@@ -8,25 +8,27 @@ const generateToken = (id) => {
 
 // 4 Register User
 exports.registerUser = async (req, res) => {
-    const { fullName, email, password, profilePic } = req.body;
+    const { fullName, email, password, profileImageUrl } = req.body;
+    //checking for missing fields
     if (!fullName || !email || !password) {
-        return res.status(400).json({ success: false, message: 'Please enter all fields' });
+        return res.status(400).json({message: 'Please enter all fields' });
     }
     try {
+        //checking for exisiting user
         const existingUser = await User.findOne({ email });
         if (existingUser) {
-            return res.status(400).json({ success: false, message: 'User already exists' });
+            return res.status(400).json({message: 'User already exists' });
         }
-        const user = await User.create({ fullName, email, password, profilePic });
-        user.password = undefined;
+        //check for user
+        const user = await User.create({ fullName, email, password, profileImageUrl, });
+        // user.password = undefined;
         res.status(201).json({
-            success: true,
             id: user._id,
             user,
             token: generateToken(user._id),
         });
     } catch (err) {
-        res.status(500).json({ success: false, message: 'Server Error', error: err.message });
+        res.status(500).json({message: 'Server Error', error: err.message });
     }
 };
 
